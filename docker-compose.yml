@@ -1,0 +1,17 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_iot
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}                      # Cria o banco automaticamente
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:${DB_PORT}"                       # Expõe a porta padrão do MySQL
+    volumes:
+      - mysql_data:/var/lib/mysql                     # Persistência: dados não somem se reiniciar
+
+volumes:
+  mysql_data:
