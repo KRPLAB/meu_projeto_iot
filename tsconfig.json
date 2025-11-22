@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es2016",            /* Versão do JS gerado */
+    "module": "commonjs",          /* Padrão de importação do Node */
+    "rootDir": "./src",            /* Onde estará o código TS */
+    "outDir": "./dist",            /* Onde ficará o JS compilado */
+    "strict": true,                /* Ativamento de  todas as checagens de tipo estritas */
+    "esModuleInterop": true,       /* Facilita compatibilidade de módulos */
+    "forceConsistentCasingInFileNames": true
+  }
+}
