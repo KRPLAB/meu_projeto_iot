@@ -6,6 +6,9 @@
     "outDir": "./dist",            /* Onde ficará o JS compilado */
     "strict": true,                /* Ativamento de  todas as checagens de tipo estritas */
     "esModuleInterop": true,       /* Facilita compatibilidade de módulos */
-    "forceConsistentCasingInFileNames": true
-  }
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
