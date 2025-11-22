@@ -19,7 +19,7 @@ export const connectMQTT = () => {
 
     const client = mqtt.connect(MQTT_BROKER_URL, {
         clientId: `backend_monitor_${Math.random().toString(16).substr(2, 8)}`,
-        clean: true,
+        clean: false,
         connectTimeout: 4000,
         reconnectPeriod: 1000,
     });
