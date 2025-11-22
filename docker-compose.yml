@@ -1,4 +1,16 @@
 services:
+  backend:
+    build: .                                          # Constrói usando o Dockerfile da pasta atual
+    container_name: iot_backend
+    restart: always
+    depends_on:
+      - db                                            # Só inicia depois que o banco subir
+    environment:
+      DATABASE_URL: ${DATABASE_URL}               
+      MQTT_BROKER_URL: ${MQTT_BROKER_URL}       
+    ports:
+      - "3000:3000"                                   # Paracriar API HTTP no futuro
+
   db:
     image: mysql:8.0
     container_name: mysql_iot
