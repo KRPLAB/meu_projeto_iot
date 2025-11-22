@@ -1,5 +1,6 @@
 import mqtt from "mqtt";
 import dotenv from "dotenv";
+import { postLeitura } from "../services/leitura/";
 
 dotenv.config();
 
@@ -24,29 +25,36 @@ export const connectMQTT = () => {
         reconnectPeriod: 1000,
     });
 
-    client.on("connect", () => {
-        console.log("====== Conectado ao Broker MQTT com sucesso! ======");
-        
-        client.subscribe(TOPICS, (err) => {
-            if (err) {
-                console.error("===== Erro ao se inscrever: =====", err);
-            } else {
-                console.log(`===== Inscrito nos tópicos: ${TOPICS.join(", ")} =====`);
-            }
-        });
+    client.on('connect', () => {
+        console.log('Conectado ao Broker MQTT com sucesso!');
+        client.subscribe(TOPICS);
     });
 
-    client.on("message", (topic, message) => {
-        // Converter o buffer da mensagem para String
-        const payload = message.toString();
-        console.log(`====== Recebido [${topic}]: ${payload} ======`);
-        
+    client.on("message", async (topic, message) => {
+        try {
+            const payloadStr = message.toString();
+            console.log(`Recebido [${topic}]: ${payloadStr}`);
+
+            const payload = JSON.parse(payloadStr);
+
+            if (payload.sensor_id && payload.valor) {
+                await postLeitura({
+                    sensor_id: payload.sensor_id,
+                    valor: payload.valor,
+                });
+                console.log("====== Leitura registrada no banco de dados ======");
+            } else {
+                console.error("===== Payload inválido recebido =====");
+            }
+        } catch (error) {
+            console.error("===== Erro ao processar a mensagem recebida: =====", error);
+        }
     });
 
     client.on("error", (err) => {
         console.error("====== Erro na conexão MQTT: ======", err);
         client.end();
     });
-    
+        
     return client;
 };
