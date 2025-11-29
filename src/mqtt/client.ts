@@ -2,6 +2,7 @@ import mqtt from "mqtt";
 import dotenv from "dotenv";
 import { registrarLeitura } from "@/services/leitura";
 import { criarAlerta } from "@/services/alerta";
+import { prisma } from '@/config/database';
 
 dotenv.config();
 
@@ -30,12 +31,26 @@ export const connectMQTT = () => {
     client.on('connect', () => {
         console.log('Conectado ao Broker MQTT com sucesso!');
         client.subscribe(TOPICS);
+        client.subscribe('dispositivos/registro');
     });
 
     client.on("message", async (topic, message) => {
         try {
             const payloadStr = message.toString();
             console.log(`Recebido [${topic}]: ${payloadStr}`);
+
+            if (topic === 'dispositivos/registro') {
+                const { mac_address } = JSON.parse(payloadStr);
+                let dispositivo = await prisma.dispositivos.findUnique({ where: { mac_address } });
+                if (!dispositivo) {
+                    dispositivo = await prisma.dispositivos.create({ data: { mac_address, status: 'online' } });
+                }
+                const uuid = dispositivo.uuid;
+                const responseTopic = `dispositivos/registro/${mac_address}`;
+                client.publish(responseTopic, JSON.stringify({ uuid }));
+                console.log(`Registrado ESP: ${mac_address} -> ${uuid}`);
+                return;
+            }
 
             const payload = JSON.parse(payloadStr);
             // Extrai dispositivoId e sensorId do tópico
