@@ -15,9 +15,9 @@ export const update = z.object({
 export const getAll = z.object({});
 
 export const getById = z.object({
-  dispositivoId: z.string().regex(/^\d+$/),
+  dispositivoUuid: z.string().uuid(),
 });
 
 export const remove = z.object({
-  dispositivoId: z.string().regex(/^\d+$/),
+  dispositivoUuid: z.string().uuid(),
 });
