@@ -1,0 +1,28 @@
+import { NextFunction, Request, Response } from 'express';
+import { ZodObject, ZodError } from 'zod';
+
+// High Order Function: Uma função que retorna um middleware do Express
+export const validate = (schema: ZodObject) =>
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            // Tenta validar body, query e params de uma vez
+            await schema.parseAsync({
+                body: req.body,
+                query: req.query,
+                params: req.params,
+            });
+            return next();
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return res.status(400).json({
+                    status: 'error',
+                    message: 'Erro de validação',
+                    errors: error.issues.map(err => ({
+                        field: err.path.join('.'),
+                        message: err.message
+                    }))
+                });
+            }
+            return res.status(500).json({ error: 'Erro interno de validação' });
+        }
+    };

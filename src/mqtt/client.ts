@@ -1,6 +1,7 @@
 import mqtt from "mqtt";
 import dotenv from "dotenv";
-import { postLeitura } from "../services/leitura/";
+import { registrarLeitura } from "@/services/leitura";
+import { criarAlerta } from "@/services/alerta";
 
 dotenv.config();
 
@@ -12,8 +13,9 @@ if (!MQTT_BROKER_URL) {
     MQTT_BROKER_URL = "mqtt://broker.hivemq.com:1883";
 }
 
-// Tópicos de inscrição
-const TOPICS = ["casa/cozinha/gas"];
+
+// Tópicos de inscrição no padrão solicitado
+const TOPICS = ["+/sensores/leituras/+", "+/sensores/alertas/+"];
 
 export const connectMQTT = () => {
     console.log(`Tentando conectar ao Broker em: ${MQTT_BROKER_URL}`);
@@ -36,15 +38,18 @@ export const connectMQTT = () => {
             console.log(`Recebido [${topic}]: ${payloadStr}`);
 
             const payload = JSON.parse(payloadStr);
+            // Extrai dispositivoId e sensorId do tópico
+            // Exemplo: "123/sensores/leituras/5"
+            const [dispositivoId, , tipo, sensorId] = topic.split("/");
 
-            if (payload.sensor_id && payload.valor) {
-                await postLeitura({
-                    sensor_id: payload.sensor_id,
-                    valor: payload.valor,
-                });
+            if (tipo === "leituras" && payload.valor) {
+                await registrarLeitura(Number(sensorId), payload.valor);
                 console.log("====== Leitura registrada no banco de dados ======");
+            } else if (tipo === "alertas" && payload.nivel && payload.mensagem) {
+                await criarAlerta(Number(sensorId), payload.nivel, payload.mensagem, payload.leituraId ?? null);
+                console.log("====== Alerta registrado no banco de dados ======");
             } else {
-                console.error("===== Payload inválido recebido =====");
+                console.error("===== Payload ou tópico inválido recebido =====");
             }
         } catch (error) {
             console.error("===== Erro ao processar a mensagem recebida: =====", error);
