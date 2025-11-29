@@ -46,7 +46,7 @@ export const connectMQTT = () => {
                 await registrarLeitura(Number(sensorId), payload.valor);
                 console.log("====== Leitura registrada no banco de dados ======");
             } else if (tipo === "alertas" && payload.nivel && payload.mensagem) {
-                await criarAlerta(Number(sensorId), payload.nivel, payload.mensagem, payload.leituraId ?? null);
+                await criarAlerta(Number(sensorId), payload.nivel, payload.mensagem);
                 console.log("====== Alerta registrado no banco de dados ======");
             } else {
                 console.error("===== Payload ou tópico inválido recebido =====");

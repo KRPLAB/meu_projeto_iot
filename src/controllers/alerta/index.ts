@@ -5,7 +5,7 @@ export const criar = async (req: Request, res: Response) => {
   try {
     const sensorId = Number(req.params.sensorId);
     const { nivel, mensagem, leituraId } = req.body as AlertaCreateInput;
-    const alerta = await criarAlerta(sensorId, nivel, mensagem, leituraId);
+  const alerta = await criarAlerta(sensorId, nivel, mensagem);
     res.status(201).json(alerta);
   } catch (error: any) {
     res.status(400).json({ error: error.message });

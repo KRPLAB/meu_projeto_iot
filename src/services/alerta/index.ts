@@ -1,13 +1,12 @@
 import { prisma } from '@/config/database';
 import { CreateAlerta, GetAlertas } from './types';
 
-export const criarAlerta = async (sensorId: number, nivel: 'baixo' | 'medio' | 'alto', mensagem: string, leituraId?: number | null) => {
+export const criarAlerta = async (sensorId: number, nivel: 'baixo' | 'medio' | 'alto', mensagem: string) => {
     return prisma.alertas.create({
         data: {
             sensor_id: sensorId,
             nivel,
             mensagem,
-            ...(leituraId ? { leitura_id: leituraId } : {}),
         }
     });
 };
