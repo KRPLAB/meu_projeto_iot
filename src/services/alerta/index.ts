@@ -1,7 +1,7 @@
 import { prisma } from '@/config/database';
-import { CreateAlerta, GetAlertas } from './types';
+import { CreateAlerta, GetAlertaById, GetAlertas, DeleteAlerta } from './types';
 
-export const criarAlerta = async (sensorId: number, nivel: 'baixo' | 'medio' | 'alto', mensagem: string) => {
+export const criarAlerta = async (sensorId: number, nivel: 'baixo' | 'medio' | 'alto', mensagem: string): Promise<CreateAlerta.Return> => {
     return prisma.alertas.create({
         data: {
             sensor_id: sensorId,
@@ -11,7 +11,7 @@ export const criarAlerta = async (sensorId: number, nivel: 'baixo' | 'medio' | '
     });
 };
 
-export const listarAlertasPorSensor = async (sensorId: number) => {
+export const listarAlertasPorSensor = async (sensorId: number): Promise<GetAlertas.Return> => {
     return prisma.alertas.findMany({
         where: {
             sensor_id: sensorId
@@ -22,7 +22,7 @@ export const listarAlertasPorSensor = async (sensorId: number) => {
     });
 };
 
-export const obterAlertaPorId = async (sensorId: number, alertaId: number) => {
+export const obterAlertaPorId = async (sensorId: number, alertaId: number): Promise<GetAlertaById.Return> => {
     return prisma.alertas.findFirst({
         where: { 
             id: alertaId,
@@ -31,7 +31,7 @@ export const obterAlertaPorId = async (sensorId: number, alertaId: number) => {
     });
 };
 
-export const removerAlerta = async (sensorId: number, alertaId: number) => {
+export const removerAlerta = async (sensorId: number, alertaId: number): Promise<DeleteAlerta.Return> => {
     await prisma.alertas.deleteMany({
         where: {
             id: alertaId, 
