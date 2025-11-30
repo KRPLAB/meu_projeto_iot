@@ -56,7 +56,7 @@ export const connectMQTT = () => {
 
             const sensorIdFinal = payload.sensor ?? Number(sensorId);
 
-            if (tipo === "leituras" && payload.valor) {
+            if (tipo === "leituras" && payload.valor !== undefined) {
                 await registrarLeitura(sensorIdFinal, payload.valor);
                 console.log("====== Leitura registrada no banco de dados ======");
             } else if (tipo === "alertas" && payload.nivel && payload.mensagem) {

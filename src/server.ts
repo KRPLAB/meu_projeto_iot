@@ -24,7 +24,6 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ error: 'Algo deu errado!' });
 });
 
-console.log("Hello World!");
 console.log("🚀 Iniciando Sistema IoT...");
 
 // Conectar ao broker MQTT
