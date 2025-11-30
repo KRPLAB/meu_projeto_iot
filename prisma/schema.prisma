@@ -1,0 +1,66 @@
+generator client {
+  provider    = "prisma-client-js"
+  engineType  = "node-api"  
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model alertas {
+  id        Int           @id @default(autoincrement())
+  sensor_id Int
+  nivel     alertas_nivel
+  mensagem  String?       @db.Text
+  data_hora DateTime?     @default(now()) @db.DateTime(0)
+  resolvido Boolean?      @default(false)
+  sensores  sensores      @relation(fields: [sensor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "alertas_ibfk_1")
+
+  @@index([sensor_id], map: "sensor_id")
+}
+
+model dispositivos {
+  uuid        String               @id @default(uuid()) @db.Char(36)
+  mac_address String               @unique(map: "mac_address") @db.VarChar(17)
+  descricao   String?              @db.VarChar(255)
+  status      dispositivos_status? @default(offline)
+  criado_em   DateTime?            @default(now()) @db.DateTime(0)
+}
+
+model leituras {
+  id        Int       @id @default(autoincrement())
+  sensor_id Int
+  valor     Decimal   @db.Decimal(10, 2)
+  data_hora DateTime? @default(now()) @db.DateTime(0)
+  resolvido Boolean?  @default(false)
+  sensores  sensores  @relation(fields: [sensor_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "leituras_ibfk_1")
+
+  @@index([sensor_id], map: "sensor_id")
+}
+
+model sensores {
+  id             Int              @id @default(autoincrement())
+  tipo           String           @db.VarChar(8)
+  localizacao    String?          @db.VarChar(20)
+  status         sensores_status? @default(ativo)
+  dispositivo_id Int?
+  alertas        alertas[]
+  leituras       leituras[]
+}
+
+enum alertas_nivel {
+  baixo
+  medio
+  alto
+}
+
+enum dispositivos_status {
+  online
+  offline
+}
+
+enum sensores_status {
+  ativo
+  inativo
+}
