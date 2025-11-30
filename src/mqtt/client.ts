@@ -6,7 +6,6 @@ import { prisma } from '@/config/database';
 
 dotenv.config();
 
-// URL do broker
 let MQTT_BROKER_URL = process.env.MQTT_BROKER_URL; 
 
 if (!MQTT_BROKER_URL) {
@@ -14,8 +13,6 @@ if (!MQTT_BROKER_URL) {
     MQTT_BROKER_URL = "mqtt://broker.hivemq.com:1883";
 }
 
-
-// Tópicos de inscrição no padrão solicitado
 const TOPICS = ["+/sensores/leituras/+", "+/sensores/alertas/+"];
 
 export const connectMQTT = () => {
@@ -57,11 +54,13 @@ export const connectMQTT = () => {
             // Exemplo: "123/sensores/leituras/5"
             const [dispositivoId, , tipo, sensorId] = topic.split("/");
 
+            const sensorIdFinal = payload.sensor ?? Number(sensorId);
+
             if (tipo === "leituras" && payload.valor) {
-                await registrarLeitura(Number(sensorId), payload.valor);
+                await registrarLeitura(sensorIdFinal, payload.valor);
                 console.log("====== Leitura registrada no banco de dados ======");
             } else if (tipo === "alertas" && payload.nivel && payload.mensagem) {
-                await criarAlerta(Number(sensorId), payload.nivel, payload.mensagem);
+                await criarAlerta(sensorIdFinal, payload.nivel, payload.mensagem);
                 console.log("====== Alerta registrado no banco de dados ======");
             } else {
                 console.error("===== Payload ou tópico inválido recebido =====");

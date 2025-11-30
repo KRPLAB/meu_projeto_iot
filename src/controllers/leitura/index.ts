@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { registrarLeitura, listarLeiturasPorSensor, obterLeituraPorId, removerLeitura } from '@/services/leitura';
 import { LeituraCreateInput } from './types';
 
-
 export const listar = async (req: Request, res: Response) => {
   try {
     const sensorId = Number(req.params.sensorId);
@@ -12,7 +11,6 @@ export const listar = async (req: Request, res: Response) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 
 export const obterPorId = async (req: Request, res: Response) => {
   try {
@@ -25,7 +23,6 @@ export const obterPorId = async (req: Request, res: Response) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 
 export const criar = async (req: Request, res: Response) => {
   try {

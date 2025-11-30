@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodObject, ZodError } from 'zod';
 
-// High Order Function: Uma função que retorna um middleware do Express
 export const validate = (schema: ZodObject) =>
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            // Tenta validar body, query e params de uma vez
             await schema.parseAsync(req.body);
             return next();
         } catch (error) {

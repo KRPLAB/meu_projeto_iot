@@ -15,7 +15,6 @@ router.get('/', (req: Request, res: Response) => {
 // --- Rotas REST aninhadas ---
 
 // Dispositivos
-// (Assumindo que existam os controllers e validações correspondentes)
 import * as DispositivoController from '@/controllers/dispositivo';
 import { create as dispositivoCreate, update as dispositivoUpdate } from '@/middleware/validation/dispositivo';
 router.post('/dispositivos', validate(dispositivoCreate), DispositivoController.criar);

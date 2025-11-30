@@ -1,6 +1,7 @@
 import { criarAlerta, listarAlertasPorSensor, obterAlertaPorId, removerAlerta } from '@/services/alerta';
 import { Request, Response } from 'express';
 import { AlertaCreateInput } from './types';
+
 export const criar = async (req: Request, res: Response) => {
   try {
     const sensorId = Number(req.params.sensorId);

@@ -2,9 +2,24 @@ import { prisma } from '@/config/database';
 import { CreateAlerta, GetAlertaById, GetAlertas, DeleteAlerta } from './types';
 
 export const criarAlerta = async (sensorId: number, nivel: 'baixo' | 'medio' | 'alto', mensagem: string): Promise<CreateAlerta.Return> => {
+    // Verifica se o sensor existe
+    let sensor = await prisma.sensores.findUnique({ where: { id: sensorId } });
+    let sensorIdToUse = sensorId;
+    if (!sensor) {
+        // Cria sensor padrão se não existir
+        const novoSensor = await prisma.sensores.create({
+            data: {
+                tipo: 'mq',
+                status: 'ativo',
+                localizacao: 'desconhecido',
+                dispositivo_id: null
+            }
+        });
+        sensorIdToUse = novoSensor.id;
+    }
     return prisma.alertas.create({
         data: {
-            sensor_id: sensorId,
+            sensor_id: sensorIdToUse,
             nivel,
             mensagem,
         }
