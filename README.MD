@@ -27,21 +27,7 @@ A ideia deste projeto é criar uma solução acessível e inteligente que:
 A solução segue o padrão de **IoT baseado em eventos**, usando MQTT como protocolo de comunicação e uma arquitetura separada entre _Edge → Cloud_.
 
 
-```
-
-┌─────────┐ Wi-Fi ┌────────────┐ Docker ┌───────────────┐
-
-│ ESP32 │ ─────────────────► │ Mosquitto │ ─────────────────► │ Backend Node │
-
-│ (MQ-5) │ MQTT Publish │ Broker │ MQTT Sub │ + MySQL/Prisma│
-
-└─────────┘ └────────────┘ └───────────────┘
-
-│
-
-└─ ► Buzzer (Alarme local)
-
-```
+![Diagrama UML](./diagrama_aws_anotado.png)
 
 **Edge (Dispositivo):**
 
